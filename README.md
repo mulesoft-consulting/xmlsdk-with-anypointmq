@@ -1,24 +1,26 @@
-Project Setup
-Step 1: Create the XML SDK project
+# *Project Setup*
+
+## Step 1: Create the XML SDK project
 ```
 mvn archetype:generate -DarchetypeGroupId=org.mule.extensions -DarchetypeArtifactId=xml-mule-extensions-archetype -DarchetypeVersion=1.0.1 -DgroupId=org.mule.extension -DartifactId=error-handler-framework -DmuleConnectorName=ErrorHandler
 
 ```
 Note: Ensure you have configured the Mule Maven Enterprise Repository credentials in your environment.
 
-Step 2: Import the project into Anypoint Studio
+## Step 2: Import the project into Anypoint Studio
 Launch Anypoint Studio -> File -> Import and select Anypoint Studio Project from File system as shown below:
 
 ![alt text](ImportProject.png)
 
-Step 3: Rename the project name if necessary and click Finish.
+## Step 3: Rename the project name if necessary and click Finish.
 
 ![alt text](RenameProject.png)
 
 The above steps should import the project into Anypoint Studio.
 
-Step 4: Delete the assertion-munit-test.xml file from the munit folder
-Step 5: Add required dependencies
+## Step 4: Delete the assertion-munit-test.xml file from the munit folder
+
+## Step 5: Add required dependencies
 As you already know, our error-handling logic uses Anypoint MQ connector and dataweave. Therefore, we need to add the required dependencies to the XML SDK project. 
 To add Anypoint MQ Connector, simply click on Open Exchange button  on the top navigation bar in Studio,search for Anypoint MQ and click on the Add to project as shown below.
 
@@ -34,10 +36,10 @@ In order to perform the dataweave transformation, it is required to add the foll
 </dependency>
 ```
 
-Implementation
+# *Implementation*
 To understand the XML SDK basics, please see this. The entire logic is implemented in the xml sdk module that is created under src/main/resources/org/mule/yourdomain folder.
 
-Step 1: Define properties
+## Step 1: Define properties
 Let’s go ahead and define the properties that we will use in the operation. All properties are added under <module name="ErrorHandler" ..> of the xml sdk module. For this use-case, we will define all the properties that are required for Anypoint MQ connection namely url, client Id, client secret. You will also see below that I have defined additional properties for ackToken, redelivery_count, sourceQueue, errorQueue etc. That is because the variables defined in the main flow are not available inside the Module. Therefore, anything that is required by the module needs to be passed either as properties or parameters. Lastly, we will also have to pass the error object as a property (with value #[error]) because we need to enrich the message with the error cause and description before we publish the message to the error queue.
 
 ```
@@ -69,7 +71,7 @@ Make sure to prefix “mule:” for out-of-the-box elements like loggers, set-va
 Since we are using Anypoint MQ is an enterprise connector, we need to add a category to the module as shown below:
 <module name="ErrorHandler" category="SELECT" … >
 
-Step 3: Define Operation
+## Step 3: Define Operation
 Operations element is the main block of code where we will implement the logic. It is like a function in that it has input parameters, performs actions and has a single output. For our use-case, we will just leverage the body element to implement the logic. For advanced use-cases, please see this.
 
 XML SDK Module Code:
@@ -136,7 +138,7 @@ output application/json
  </module>
 
 ```
-Step 4: Installation
+## Step 4: Installation
 Run mvn clean install to create the plugin. To add the connector to another project, simply add the dependency coordinates of the module to your project.
 <dependency>
             <groupId>{Your-Anypoint-Org-Id}</groupId>
