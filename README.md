@@ -140,12 +140,14 @@ output application/json
 ```
 ## Step 4: Installation
 Run mvn clean install to create the plugin. To add the connector to another project, simply add the dependency coordinates of the module to your project.
+```
 <dependency>
             <groupId>{Your-Anypoint-Org-Id}</groupId>
             <artifactId>error-handler-framework</artifactId>
             <version>1.0.3</version>
             <classifier>mule-plugin</classifier>
  </dependency>
+```
 
 The best practice recommendation is to [publish the module to Exchange](https://docs.mulesoft.com/exchange/to-publish-assets-maven) so it can be discovered by other developers and reused.
 
