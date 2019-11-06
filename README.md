@@ -22,7 +22,7 @@ The above steps should import the project into Anypoint Studio.
 
 ## Step 5: Add required dependencies
 As you already know, our error-handling logic uses Anypoint MQ connector and dataweave. Therefore, we need to add the required dependencies to the XML SDK project. 
-To add Anypoint MQ Connector, simply click on Open Exchange button (https://docs.mulesoft.com/studio/7.3/_images/import-project-exchange-c2fce.png)  on the top navigation bar in Studio,search for Anypoint MQ and click on the Add to project as shown below.
+To add Anypoint MQ Connector, simply click on Open Exchange button ![alt text](https://docs.mulesoft.com/studio/7.3/_images/import-project-exchange-c2fce.png)  on the top navigation bar in Studio,search for Anypoint MQ and click on the Add to project as shown below.
 
 ![alt text](Exchange.png)
 
