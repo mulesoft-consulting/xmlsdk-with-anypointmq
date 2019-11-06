@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="ErrorHandler" category="SELECT"
+        prefix="errorhandler"
+        doc:description="This module relies entirely in runtime provided components (no other Plugin dependencies)"
+
+        xmlns="http://www.mulesoft.org/schema/mule/module"
+        xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+        xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+        xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:anypoint-mq="http://www.mulesoft.org/schema/mule/anypoint-mq"
+        xsi:schemaLocation="
+           http://www.mulesoft.org/schema/mule/module http://www.mulesoft.org/schema/mule/module/current/mule-module.xsd
+           http://www.mulesoft.org/schema/mule/anypoint-mq http://www.mulesoft.org/schema/mule/anypoint-mq/current/mule-anypoint-mq.xsd
+           http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<property name="anypointmq.url" defaultValue="https://mq-us-west-2.anypoint.mulesoft.com/api/v1" displayName="AnypointMQ-Url" type="string"/>
+    <property name="anypointmq.clientId" type="string" displayName="AnypointMQ-ClientId"/>
+    <property name="anypointmq.clientSecret" password="true" type="string" displayName="AnypointMQ-ClientSecret"/>
+    <property name="anypointmq.sourceQueue" type="string" displayName="AnypointMQ-SourceQueueName"/>
+    <property name="anypointmq.errorQueue" type="string" displayName="AnypointMQ-ErrorQueueName"/>
+    <property name="originalPayload" type="string" displayName="originalPayload"/>
+    <property name="ackToken" type="string" displayName="AnypointMQ-AckToken"/>
+    <property name="redelivery_count" type="number" displayName="Redelivery-Count"/>
+    <property name="error" type="any" defaultValue="#[error]" displayName="error"/>
+	<anypoint-mq:config name="Anypoint_MQ_Config" doc:name="Anypoint MQ Config" doc:id="7dabe09d-a2c8-494b-86a0-ac09ea4f5d73" >
+		<anypoint-mq:connection url="#[vars.'anypointmq.url']" clientId="#[vars.'anypointmq.clientId']" clientSecret="#[vars.'anypointmq.clientSecret']" />
+	</anypoint-mq:config>
+    <operation name="on-error" displayName="Process Error">
+        <body>
+        <mule:logger level="INFO" doc:name="Log redelivery_count" doc:id="ce986698-1e27-4323-8931-63adbacd2544" message="RedeliveryCount in QueueProcessor : #[vars.'redelivery_count' ]" />
+        <mule:logger level="INFO" doc:name="Log redelivery_count" doc:id="ce986698-1e27-4323-8931-63adbacd2544" message="ErrorCause in QueueProcessor : #[vars.error.cause.summaryMessage]" />
+            <ee:transform doc:name="Transform Message" doc:id="8ea42bff-7129-465b-8a32-b3dce90aa8b1">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"data": vars.originalPayload,
+	"errorDescription": vars.error.description,
+	"errorCause": vars.error.cause.summaryMessage,
+	"sourceQueueName": vars.'anypointMQ.sourceQueue'
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<mule:logger level="INFO" doc:name="Log redelivery_count" doc:id="ce986698-1e27-4323-8931-63adbacd2544" message="RedeliveryCount in QueueProcessor : #[vars.'redelivery_count' ]" />
+				<anypoint-mq:publish doc:name="Publish to error-queue" doc:id="d02eaff6-5cb5-4af6-a0e2-60eb2383dc74" config-ref="Anypoint_MQ_Config" destination="#[vars.'anypointmq.errorQueue']">
+					<anypoint-mq:properties><![CDATA[#[output application/java
+---
+{
+	count : vars.'redelivery_count'
+}]]]></anypoint-mq:properties>
+				</anypoint-mq:publish>
+				<anypoint-mq:ack doc:name="Ack" doc:id="53edbd13-6dfc-4c8b-97c5-8229790be897" config-ref="Anypoint_MQ_Config" ackToken="#[vars.ackToken]"/>
+        </body>
+    </operation>
+
+   
+ </module>
