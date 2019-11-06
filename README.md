@@ -1,11 +1,11 @@
 # *Project Setup*
 
-## Step 1: Create the XML SDK project
+## Step 1: [Create the XML SDK project](https://docs.mulesoft.com/mule-sdk/1.1/xml-sdk#create-and-test-an-xml-sdk-project)
 ```
 mvn archetype:generate -DarchetypeGroupId=org.mule.extensions -DarchetypeArtifactId=xml-mule-extensions-archetype -DarchetypeVersion=1.0.1 -DgroupId=org.mule.extension -DartifactId=error-handler-framework -DmuleConnectorName=ErrorHandler
 
 ```
-Note: Ensure you have configured the Mule Maven Enterprise Repository credentials in your environment.
+Note: Ensure you have configured the [Mule Maven Enterprise Repository credentials](https://help.mulesoft.com/s/article/How-to-use-Enterprise-Maven-Repository-credentials-with-Anypoint-Studio-7-embedded-Maven) in your environment.
 
 ## Step 2: Import the project into Anypoint Studio
 Launch Anypoint Studio -> File -> Import and select Anypoint Studio Project from File system as shown below:
@@ -37,10 +37,10 @@ In order to perform the dataweave transformation, it is required to add the foll
 ```
 
 # *Implementation*
-To understand the XML SDK basics, please see this. The entire logic is implemented in the xml sdk module that is created under src/main/resources/org/mule/yourdomain folder.
+To understand the XML SDK basics, please see [this](https://docs.mulesoft.com/mule-sdk/1.1/xml-sdk#xml-sdk-basics). The entire logic is implemented in the xml sdk module that is created under src/main/resources/org/mule/yourdomain folder.
 
 ## Step 1: Define properties
-Let’s go ahead and define the properties that we will use in the operation. All properties are added under <module name="ErrorHandler" ..> of the xml sdk module. For this use-case, we will define all the properties that are required for Anypoint MQ connection namely url, client Id, client secret. You will also see below that I have defined additional properties for ackToken, redelivery_count, sourceQueue, errorQueue etc. That is because the variables defined in the main flow are not available inside the Module. Therefore, anything that is required by the module needs to be passed either as properties or parameters. Lastly, we will also have to pass the error object as a property (with value #[error]) because we need to enrich the message with the error cause and description before we publish the message to the error queue.
+Let’s go ahead and define the [properties](https://docs.mulesoft.com/mule-sdk/1.1/xml-sdk#properties) that we will use in the operation. All properties are added under <module name="ErrorHandler" ..> of the xml sdk module. For this use-case, we will define all the properties that are required for Anypoint MQ connection namely url, client Id, client secret. You will also see below that I have defined additional properties for ackToken, redelivery_count, sourceQueue, errorQueue etc. That is because the variables defined in the main flow are not available inside the Module. Therefore, anything that is required by the module needs to be passed either as properties or parameters. Lastly, we will also have to pass the error object as a property (with value #[error]) because we need to enrich the message with the error cause and description before we publish the message to the error queue.
 
 ```
 <property name="anypointmq.url" defaultValue="https://mq-us-west-2.anypoint.mulesoft.com/api/v1" displayName="AnypointMQ-Url" type="string"/>
@@ -72,7 +72,7 @@ Since we are using Anypoint MQ is an enterprise connector, we need to add a cate
 <module name="ErrorHandler" category="SELECT" … >
 
 ## Step 3: Define Operation
-Operations element is the main block of code where we will implement the logic. It is like a function in that it has input parameters, performs actions and has a single output. For our use-case, we will just leverage the body element to implement the logic. For advanced use-cases, please see this.
+Operations element is the main block of code where we will implement the logic. It is like a function in that it has input parameters, performs actions and has a single output. For our use-case, we will just leverage the body element to implement the logic. For advanced use-cases, please see [this](https://docs.mulesoft.com/mule-sdk/1.1/xml-sdk#operations).
 
 XML SDK Module Code:
 ```
@@ -147,7 +147,7 @@ Run mvn clean install to create the plugin. To add the connector to another proj
             <classifier>mule-plugin</classifier>
  </dependency>
 
-The best practice recommendation is to publish the module to Exchange so it can be discovered by other developers and reused.
+The best practice recommendation is to [publish the module to Exchange](https://docs.mulesoft.com/exchange/to-publish-assets-maven) so it can be discovered by other developers and reused.
 
 
 
